@@ -1,0 +1,140 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <input id="text">
+    <div class="post"></div>
+    <script src="index.js"></script>
+    <button id="postBtn">Posta</button>
+</body>
+</html>-->
+
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Min Blogg</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .inlagg {
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-bottom: 10px;
+            position: relative;
+        }
+        .vald {
+            background-color: #f0f0f0;
+        }
+        .valj-knapp {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+        }
+        .datum {
+            font-size: 0.8em;
+            color: #777;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Min Blogg</h1>
+    <div>
+        <textarea id="textFalt" rows="4" cols="50" placeholder="Skriv ditt inlägg här..."></textarea>
+        <br>
+        <button onclick="postaInlagg()">Posta</button>
+        <button onclick="taBortInlagg()">Ta bort valt inlägg</button>
+    </div>
+    <div id="inlaggContainer">
+        <!-- Här kommer inlägg att visas -->
+    </div>
+
+    <script>
+        var valtInlagg = null;
+
+        // Ladda inlägg från localStorage vid sidladdning
+        window.onload = function() {
+            var inlaggContainer = document.getElementById('inlaggContainer');
+            var inlagg = JSON.parse(localStorage.getItem('inlagg')) || [];
+            inlagg.forEach(function(inlaggData, index) {
+                skapaInlagg(inlaggData.text, inlaggData.datum, index);
+            });
+        }
+
+        function postaInlagg() {
+            var textFalt = document.getElementById('textFalt');
+            var text = textFalt.value;
+            var datum = new Date().toLocaleString();
+
+            if (text.trim() !== "") {
+                var inlagg = JSON.parse(localStorage.getItem('inlagg')) || [];
+                inlagg.push({ text: text, datum: datum });
+                localStorage.setItem('inlagg', JSON.stringify(inlagg));
+
+                skapaInlagg(text, datum, inlagg.length - 1);
+
+                textFalt.value = '';
+            }
+        }
+
+        function skapaInlagg(text, datum, index) {
+            var inlaggContainer = document.getElementById('inlaggContainer');
+            var nyttInlagg = document.createElement('div');
+            nyttInlagg.className = 'inlagg';
+            nyttInlagg.dataset.index = index;
+
+            var datumElement = document.createElement('div');
+            datumElement.className = 'datum';
+            datumElement.textContent = "Publicerat: " + datum;
+
+            var textElement = document.createElement('div');
+            textElement.textContent = text;
+
+            var valjKnapp = document.createElement('button');
+            valjKnapp.textContent = 'Välj';
+            valjKnapp.className = 'valj-knapp';
+            valjKnapp.onclick = function() {
+                if (valtInlagg) {
+                    valtInlagg.classList.remove('vald');
+                }
+                valtInlagg = nyttInlagg;
+                nyttInlagg.classList.add('vald');
+            };
+
+            nyttInlagg.appendChild(datumElement);
+            nyttInlagg.appendChild(textElement);
+            nyttInlagg.appendChild(valjKnapp);
+            inlaggContainer.appendChild(nyttInlagg);
+        }
+
+        function taBortInlagg() {
+            if (valtInlagg) {
+                var index = valtInlagg.dataset.index;
+                var inlagg = JSON.parse(localStorage.getItem('inlagg')) || [];
+                inlagg.splice(index, 1);
+                localStorage.setItem('inlagg', JSON.stringify(inlagg));
+
+                var inlaggContainer = document.getElementById('inlaggContainer');
+                inlaggContainer.removeChild(valtInlagg);
+
+                // Uppdatera index för resterande inlägg
+                var kvarvarandeInlagg = inlaggContainer.querySelectorAll('.inlagg');
+                kvarvarandeInlagg.forEach((inlagg, nyIndex) => {
+                    inlagg.dataset.index = nyIndex;
+                });
+
+                valtInlagg = null;
+            }
+        }
+    </script>
+</body>
+</html>

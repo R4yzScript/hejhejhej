@@ -1,0 +1,21 @@
+.post{
+    border-style: none;
+    background-color: grey;
+    padding: 25px;
+    margin-right: 100px;
+    margin-left: 100px;
+    margin-top: 25px;
+    border-radius: 5px;
+}
+#text{
+    margin-left: 100px;
+    height: 30px;
+}
+#postBtn{
+    position: relative;
+    right: -15cm;
+    top: 15cm;
+    margin-top: 10px;
+    font-size: 20px;
+    margin-bottom: 30px;
+}
